@@ -90,7 +90,7 @@ void set_socket_opts(int sockfd)
 {
     int enable = 1;
     setsockopt(sockfd, SOL_TCP, TCP_NODELAY, &enable, sizeof(int));
-    setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE,  &enable, sizeof(int));
+    setsockopt(sockfd, SOL_SOCKET, SO_KEEPALIVE, &enable, sizeof(int));
 }
 
 /* Handle request */
