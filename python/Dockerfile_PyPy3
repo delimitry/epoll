@@ -1,0 +1,9 @@
+FROM pypy:3
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+CMD [ "pypy3", "./epoll_server.py" ]
+
+EXPOSE 8000

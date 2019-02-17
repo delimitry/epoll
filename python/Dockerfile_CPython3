@@ -1,0 +1,12 @@
+FROM alpine:3.8
+
+WORKDIR /usr/src/app
+
+RUN apk update
+RUN apk add --no-cache --update python3
+
+COPY . .
+
+CMD [ "python3", "./epoll_server.py" ]
+
+EXPOSE 8000
