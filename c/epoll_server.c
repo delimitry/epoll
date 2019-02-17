@@ -19,7 +19,7 @@ int accept4(int sockfd, struct sockaddr *addr, socklen_t *addrlen, int flags);
 #define BUF_SIZE 4096
 
 #define HOST INADDR_ANY // INADDR_ANY = 0.0.0.0
-#define PORT 1337
+#define PORT 8000
 
 #define THREAD_NUMBER 2
 
