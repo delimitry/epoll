@@ -1,0 +1,11 @@
+FROM golang:1.8
+
+WORKDIR /usr/src/app
+
+COPY . .
+
+RUN go build -o epoll_server
+
+CMD [ "./epoll_server" ]
+
+EXPOSE 8000

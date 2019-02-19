@@ -55,6 +55,13 @@ Requests/sec:  76399.70
 PyPy3 (threaded_loop (2 threads)):
 $ wrk -t2 -c100 -d10s http://0.0.0.0:8000/
 Requests/sec:  74526.86
+
+=============================================
+
+Go (ConcurrentLoop (2 threads)):
+
+$ wrk -t2 -c100 -d10s http://0.0.0.0:8000/
+Requests/sec:  76362.73
 ```
 
 It's interesting that PyPy3 performance is close to C.
