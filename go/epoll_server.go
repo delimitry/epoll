@@ -158,6 +158,9 @@ func loop() {
 	for {
 		fdsNum, err := syscall.EpollWait(epollFd, events[:], timeout)
 		if err != nil {
+			if err == syscall.EINTR {
+				continue
+			}
 			fmt.Println(err)
 			os.Exit(EXIT_FAILURE)
 		}
