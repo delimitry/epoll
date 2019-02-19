@@ -59,7 +59,6 @@ Requests/sec:  74526.86
 =============================================
 
 Go (ConcurrentLoop (2 threads)):
-
 $ wrk -t2 -c100 -d10s http://0.0.0.0:8000/
 Requests/sec:  76362.73
 ```
