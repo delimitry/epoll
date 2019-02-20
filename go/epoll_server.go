@@ -34,7 +34,7 @@ const (
 )
 
 // Set listener socket options
-func SetListenerSocketOpts(fd int) {
+func setListenerSocketOpts(fd int) {
 	if err := syscall.SetsockoptInt(fd, syscall.SOL_SOCKET, syscall.SO_REUSEADDR, 1); err != nil {
 		fmt.Println(err)
 		os.Exit(EXIT_FAILURE)
@@ -64,7 +64,7 @@ func SetListenerSocketOpts(fd int) {
 }
 
 // Add fd to epoll
-func AddFdToEpoll(epfd int, fd int, events int) {
+func addFdToEpoll(epfd int, fd int, events int) {
 	ev := syscall.EpollEvent{
 		Events: uint32(events),
 		Fd:     int32(fd),
@@ -76,7 +76,7 @@ func AddFdToEpoll(epfd int, fd int, events int) {
 }
 
 // Remove fd from epoll
-func DelFdToEpoll(epfd int, fd int, events int) {
+func delFdToEpoll(epfd int, fd int, events int) {
 	if err := syscall.EpollCtl(epfd, syscall.EPOLL_CTL_DEL, fd, nil); err != nil {
 		fmt.Println(err)
 		os.Exit(EXIT_FAILURE)
@@ -84,7 +84,7 @@ func DelFdToEpoll(epfd int, fd int, events int) {
 }
 
 // Set socket options
-func SetSocketOpts(fd int) {
+func setSocketOpts(fd int) {
 	if err := syscall.SetsockoptInt(fd, syscall.SOL_TCP, syscall.TCP_NODELAY, 1); err != nil {
 		fmt.Println(err)
 		os.Exit(EXIT_FAILURE)
@@ -96,13 +96,9 @@ func SetSocketOpts(fd int) {
 }
 
 // Handle request
-func HandleRequest(fd int) {
+func handleRequest(fd int) {
 	var buf [BUF_SIZE]byte
 	n, _ := syscall.Read(fd, buf[:])
-	// if err != nil {
-	// 	fmt.Printf("read failed: %s\n", err)
-	// 	//os.Exit(EXIT_FAILURE)
-	// }
 	if n <= 0 {
 		syscall.Close(fd)
 		return
@@ -128,7 +124,7 @@ func loop() {
 	defer syscall.Close(listenSockFd)
 
 	// set listener socket options
-	SetListenerSocketOpts(listenSockFd)
+	setListenerSocketOpts(listenSockFd)
 
 	// prepare address
 	ip4Addr := net.ParseIP(HOST).To4()
@@ -153,7 +149,7 @@ func loop() {
 	defer syscall.Close(epollFd)
 
 	// add listen_sock_fd to epoll
-	AddFdToEpoll(epollFd, listenSockFd, syscall.EPOLLIN)
+	addFdToEpoll(epollFd, listenSockFd, syscall.EPOLLIN)
 
 	for {
 		fdsNum, err := syscall.EpollWait(epollFd, events[:], timeout)
@@ -172,18 +168,18 @@ func loop() {
 					os.Exit(EXIT_FAILURE)
 				}
 				// set socket options
-				SetSocketOpts(connFd)
+				setSocketOpts(connFd)
 				// add conn_fd to epoll
-				AddFdToEpoll(epollFd, connFd, syscall.EPOLLIN|syscall.EPOLLET)
+				addFdToEpoll(epollFd, connFd, syscall.EPOLLIN|syscall.EPOLLET)
 			} else {
-				HandleRequest(int(events[index].Fd))
+				handleRequest(int(events[index].Fd))
 			}
 		}
 	}
 }
 
 // Concurrent loop
-func ConcurrentLoop() {
+func concurrentLoop() {
 	var wg sync.WaitGroup
 	for index := 0; index < GOROUTINE_COUNT; index++ {
 		wg.Add(1)
@@ -198,5 +194,5 @@ func ConcurrentLoop() {
 // Main
 func main() {
 	fmt.Printf("Server listening on %s:%d\n", HOST, PORT)
-	ConcurrentLoop()
+	concurrentLoop()
 }
